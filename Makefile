@@ -1,8 +1,5 @@
-PYTHON_VERSION=python39
-BASE_IMAGE_TAG=latest
-BEAM_VERSION=2.48.0
-OUTPUT_IMAGE=asia-southeast1-docker.pkg.dev/quan-nguyen-data-learning/dataflow/ultimate-dataflow:latest
-OUTPUT_TEMPLATE_PATH=gs://ultimate-dataflow-template/templates/ultimate-dataflow-template.json
+include .env
+export
 
 create-env:
 	pip install -U -r local-requirements.txt
