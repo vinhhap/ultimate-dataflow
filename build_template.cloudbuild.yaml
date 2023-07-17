@@ -1,0 +1,12 @@
+steps:
+  # Build the container image and push it with Kaniko
+  - name: 'gcr.io/kaniko-project/executor:latest'
+    args:
+      - --dockerfile=./template.Dockerfile
+      - --context=.
+      - --cache=true
+      - --cache-ttl=6h
+      - --destination ${_OUTPUT_IMAGE}
+      - --build-arg BASE_IMAGE_TAG=${_BASE_IMAGE_TAG}
+      - --build-arg PYTHON_VERSION=${_PYTHON_VERSION}
+      - --build-arg BEAM_VERSION=${_BEAM_VERSION}
