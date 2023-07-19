@@ -1,0 +1,11 @@
+.github/
+dev_environment/
+notebook/
+venv/
+.env*
+.gitignore
+local-requirements.txt
+Makefile
+README.md
+data/
+param.json

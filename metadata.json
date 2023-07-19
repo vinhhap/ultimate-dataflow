@@ -1,0 +1,12 @@
+{
+    "name": "Data integration pipeline",
+    "description": "Data integration pipeline",
+    "parameters": [
+        {
+            "name": "run_param",
+            "label": "Run parameter",
+            "helpText": "JSON string with parameters for the run",
+            "isOptional": false
+        }
+    ]
+}

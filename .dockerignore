@@ -1,0 +1,15 @@
+.github/
+dev_environment/
+notebook/
+test/
+venv/
+.env*
+.gcloudignore
+.gitignore
+*.yaml
+local-requirements.txt
+Makefile
+*.json
+README.md
+data/
+param.json

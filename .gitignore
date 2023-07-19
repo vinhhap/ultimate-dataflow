@@ -16,3 +16,5 @@ venv/
 notebook/
 data/
 logs/
+secrets/*.json
+param.json
