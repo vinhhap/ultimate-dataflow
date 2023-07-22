@@ -1,24 +1,46 @@
-from os import pipe
 import apache_beam as beam
+import logging
 from helper.argparser import RunParam
+from source_sink.connector_mapper import ConnectorMapper, ConnectorType
 
 class PCollToSink(beam.PTransform):
-    def __init__(self, source_sink: RunParam, *args, **kwargs):
+    def __init__(self, source_sink: RunParam, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.source_sink = source_sink
 
     def expand(self, pcoll):
-        transform = None
-        sink_type = self.source_sink.sink_type
+        # Extract info from class attribute
         name = self.source_sink.name
         sink = self.source_sink.sink
-        if 'bigquery' in sink_type:
+        sink_type = self.source_sink.sink_type
+        pipeline_options = self.source_sink.pipeline_options
+        write_options = pipeline_options.get('write_options', {})
+
+        # RDBMS sinks
+        connector_mapper = ConnectorType(**ConnectorMapper().get_connector_type(sink_type))
+        if connector_mapper.type == 'RDBMS':
             transform = (
-                pcoll | f'Write {name} to BigQuery' >> beam.io.WriteToBigQuery(
+                pcoll | f'Write {name} to {sink_type.upper()}' >> beam.ParDo(connector_mapper.connector_out(source_sink=self.source_sink))
+            )
+            return transform
+
+        # BigQuery sink
+        if connector_mapper.type == 'BigQuery':
+            transform = (
+                pcoll | f'Write {name} to {sink_type.upper()}' >> connector_mapper.connector_out(
                     table=sink,
                     schema='SCHEMA_AUTODETECT',
                     create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
                     write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND
                 )
             )
-        return transform
+            return transform
+
+        # File sinks
+        if sink_type == 'csv':
+            transform = (
+                pcoll | f'Write {name} to {sink_type.upper()}' >> beam.ParDo(connector_mapper.connector_out(source_sink=self.source_sink))
+            )
+            return transform
+
+        # TODO: Add other sinks

@@ -13,7 +13,6 @@ env/
 venv/
 .jupyter/
 .vscode/
-notebook/
 data/
 logs/
 secrets/*.json

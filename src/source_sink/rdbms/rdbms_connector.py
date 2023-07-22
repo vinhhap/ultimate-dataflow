@@ -1,9 +1,11 @@
 import sqlalchemy
-from typing import Any, Dict, Union, NamedTuple
+import pandas as pd
+from typing import Any, Dict, Union, NamedTuple, Iterator
 from sqlalchemy.engine.base import Connection
 from sqlalchemy.engine import Engine
+from sqlalchemy.sql.elements import TextClause
 
-class ConnectionInfo(NamedTuple):
+class RDBMSConnectionInfo(NamedTuple):
     dialect: str
     host: str
     port: Union[str, int]
@@ -13,7 +15,7 @@ class ConnectionInfo(NamedTuple):
     engine_options: Dict[str, Any]
 
 class BaseRDMSConnector:
-    def __init__(self, conn_info: ConnectionInfo, server_side_cursors: bool=True, stream_results: bool=True) -> None:
+    def __init__(self, conn_info: RDBMSConnectionInfo, server_side_cursors: bool=True, stream_results: bool=True) -> None:
         self.conn_info = conn_info
         self.conn_string = self._build_conn_string()
         self.server_side_cursors = server_side_cursors
@@ -40,6 +42,37 @@ class BaseRDMSConnector:
         self.engine.execution_options(stream_results=self.stream_results)
         return self.engine.connect()
 
+    def read_from_sql(self, name: str, sql: Union[TextClause, str], chunksize: int=50000) -> Iterator[pd.DataFrame]:
+        conn = self.get_database_connection()
+        try:
+            for chunk in pd.read_sql(sql, con=conn, chunksize=chunksize, dtype_backend="pyarrow"):
+                yield chunk
+        except Exception as e:
+            raise RuntimeError(f'Could not read from {name}: {e}')
+
+    def write_to_sql(self, df: pd.DataFrame, table_name: str, write_options: dict={}) -> None:
+        conn = self.get_database_connection()
+        try:
+            df.to_sql(table_name, con=conn, index=False, if_exists='append', **write_options)
+        except Exception as e:
+            raise RuntimeError(f'Could not successfully insert rows to {table_name}: {e}')
+
 class OracleConnector(BaseRDMSConnector):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+
+class PostgresConnector(BaseRDMSConnector):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+class MySQLConnector(BaseRDMSConnector):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+
+RDBMSConnectionMapper = {
+    "oracle": OracleConnector,
+    "postgres": PostgresConnector,
+    "mysql": MySQLConnector,
+    "mariadb": MySQLConnector
+}
