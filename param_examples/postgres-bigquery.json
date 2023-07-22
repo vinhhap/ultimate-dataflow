@@ -1,10 +1,10 @@
 [
     {
         "name": "TABLE1",
-        "source": "test.TABLE_1",
-        "source_type": "oracle_from_query",
+        "source": "select * from TABLE_1 limit 900000",
+        "source_type": "postgres|from_query",
         "source_connection_secret": "projects/[YOUR_PROJECT_ID]/secrets/[YOUR_SECRET_NAME]/versions/latest",
-        "sink": "test.TABLE_2",
+        "sink": "[YOUR_PROJECT_ID]:[YOUR_DATASET].TABLE_2",
         "sink_type": "bigquery",
         "sink_connection_secret": "projects/[YOUR_PROJECT_ID]/secrets/[YOUR_SECRET_NAME]/versions/latest",
         "pipeline_options": {

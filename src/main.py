@@ -21,7 +21,7 @@ def run():
     for item in run_param:
         source_sink = RunParam(**item)
         initialize = p | f"Initialize {source_sink.name}" >> beam.Create([source_sink])
-        read_source = initialize | f"Read {source_sink.name}" >> SourceToPColl()
+        read_source = initialize | f"Read {source_sink.name}" >> SourceToPColl(source_sink)
         write_sink = read_source | f"Write {source_sink.name}" >> PCollToSink(source_sink)
     logging.info("Building pipeline ...")
 
