@@ -1,7 +1,7 @@
 import apache_beam as beam
 import logging
 from helper.argparser import RunParam
-from source_sink import ConnectorMapper, ConnectorType
+from connector_mapper import ConnectorMapper, ConnectorType
 
 class PCollToSink(beam.PTransform):
     def __init__(self, source_sink: RunParam, *args, **kwargs) -> None:

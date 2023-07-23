@@ -5,7 +5,7 @@ from helper.argparser import UltimateOptions, RunParam
 from transform.read_source import SourceToPCollWithInit, SourceToPColl
 from transform.write_sink import PCollToSink
 import logging
-from source_sink import ConnectorMapper, ConnectorType
+from connector_mapper import ConnectorMapper, ConnectorType
 
 def run():
     p_options = {

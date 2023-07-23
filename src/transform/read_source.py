@@ -1,7 +1,7 @@
 import apache_beam as beam
 from helper.argparser import RunParam
 import logging
-from source_sink import ConnectorMapper, ConnectorType
+from connector_mapper import ConnectorMapper, ConnectorType
 from transform.read import *
 
 class SourceToPCollWithInit(beam.PTransform):
