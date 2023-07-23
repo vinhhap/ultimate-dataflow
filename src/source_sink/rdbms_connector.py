@@ -42,10 +42,10 @@ class BaseRDMSConnector:
         self.engine.execution_options(stream_results=self.stream_results)
         return self.engine.connect()
 
-    def read_from_sql(self, name: str, sql: Union[TextClause, str], chunksize: int=50000) -> Iterator[pd.DataFrame]:
+    def read_from_sql(self, name: str, sql: Union[TextClause, str], chunksize: int=50000, read_options: dict={}) -> Iterator[pd.DataFrame]:
         conn = self.get_database_connection()
         try:
-            for chunk in pd.read_sql(sql, con=conn, chunksize=chunksize, dtype_backend="pyarrow"):
+            for chunk in pd.read_sql(sql, con=conn, chunksize=chunksize, dtype_backend="pyarrow", **read_options):
                 yield chunk
         except Exception as e:
             raise RuntimeError(f'Could not read from {name}: {e}')
@@ -68,7 +68,6 @@ class PostgresConnector(BaseRDMSConnector):
 class MySQLConnector(BaseRDMSConnector):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-
 
 RDBMSConnectionMapper = {
     "oracle": OracleConnector,

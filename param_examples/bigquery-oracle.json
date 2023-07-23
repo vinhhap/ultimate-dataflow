@@ -1,0 +1,17 @@
+[
+    {
+        "name": "TABLE1",
+        "source": "select * from test.TABLE1 limit 90999",
+        "source_type": "bigquery|from_query",
+        "source_connection_secret": "NA",
+        "sink": "test_bigquery",
+        "sink_type": "oracle",
+        "sink_connection_secret": "projects/[YOUR_PROJECT_ID]/secrets/[YOUR_SECRET_NAME]/versions/latest",
+        "pipeline_options": {
+            "chunksize": 50000,
+            "read_options": {
+                "project": "[YOUR_PROJECT_ID]"
+            }
+        }
+    }
+]

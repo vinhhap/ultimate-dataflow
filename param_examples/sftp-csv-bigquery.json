@@ -1,0 +1,12 @@
+[
+    {
+        "name": "TABLE1",
+        "source": "sftp:///[YOUR_PATH]/*.csv",
+        "source_type": "csv",
+        "source_connection_secret": "projects/[YOUR_PROJECT_ID]/secrets/[YOUR_SECRET_NAME]/versions/latest",
+        "sink": "[YOUR_PROJECT_ID]:[YOUR_DATASET].TABLE1",
+        "sink_type": "bigquery",
+        "sink_connection_secret": "NA",
+        "pipeline_options": {}
+    }
+]
