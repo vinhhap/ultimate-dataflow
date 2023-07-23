@@ -1,7 +1,7 @@
 import apache_beam as beam
 import logging
 from helper.argparser import RunParam
-from source_sink.connector_mapper import ConnectorMapper, ConnectorType
+from source_sink import ConnectorMapper, ConnectorType
 
 class PCollToSink(beam.PTransform):
     def __init__(self, source_sink: RunParam, *args, **kwargs) -> None:
@@ -13,8 +13,6 @@ class PCollToSink(beam.PTransform):
         name = self.source_sink.name
         sink = self.source_sink.sink
         sink_type = self.source_sink.sink_type
-        pipeline_options = self.source_sink.pipeline_options
-        write_options = pipeline_options.get('write_options', {})
 
         # RDBMS sinks
         connector_mapper = ConnectorType(**ConnectorMapper().get_connector_type(sink_type))

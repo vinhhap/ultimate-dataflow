@@ -1,5 +1,5 @@
 import logging
-from source_sink.rdbms.rdbms_connector import *
+from source_sink import RDBMSConnectionInfo, RDBMSConnectionMapper
 from helper.secret import get_secret
 import pandas as pd
 from transform.write.base_write import BaseWrite

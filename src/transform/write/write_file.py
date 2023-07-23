@@ -3,6 +3,8 @@ import pandas as pd
 from transform.write.base_write import BaseWrite
 import uuid
 import copy
+from source_sink import SFTPConnector
+from helper.secret import get_secret
 
 class WriteCsv(BaseWrite):
     def __init__(self, *args, **kwargs):
@@ -10,6 +12,7 @@ class WriteCsv(BaseWrite):
     
     def _flush_batch(self):
         sink = self.source_sink.sink
+        sink_connection_secret = self.source_sink.sink_connection_secret
         pipeline_options = self.source_sink.pipeline_options
         write_options = pipeline_options.get("write_options", {})
         file_naming = write_options.get('file_naming', None)
@@ -22,4 +25,10 @@ class WriteCsv(BaseWrite):
         params.pop('index', None)
         params.pop('sep', None)
 
-        df.to_csv(file_path, sep = sep, index=False, **params)
+        if sink.startswith('sftp://'):
+            file_path = file_path.replace('sftp://', '')
+            connector = SFTPConnector(get_secret(sink_connection_secret))
+            connector.write_csv(file_path, df, sep=sep, **params)
+            connector.close_connection()
+        else:
+            df.to_csv(file_path, sep = sep, index=False, **params)

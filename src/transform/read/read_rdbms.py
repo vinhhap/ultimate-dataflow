@@ -3,8 +3,7 @@ from helper.argparser import RunParam
 from helper.secret import get_secret
 from sqlalchemy.sql import text
 import logging
-from source_sink.rdbms.rdbms_connector import *
-from pandas import DataFrame
+from source_sink import RDBMSConnectionInfo, RDBMSConnectionMapper
 
 class ReadRDBMS(beam.DoFn):
     def process(self, context: RunParam):
@@ -35,7 +34,3 @@ class ReadRDBMS(beam.DoFn):
         logging.info(f"Reading data for {name} using in chunks of {chunksize}")
         return connector.read_from_sql(name=name, sql=input_sql, chunksize=chunksize)
 
-class ConvertSourceToDict(beam.DoFn):
-    def process(self, df: DataFrame):
-        for row in df.to_dict(orient='records'):
-            yield row

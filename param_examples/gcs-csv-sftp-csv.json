@@ -1,0 +1,21 @@
+[
+    {
+        "name": "TABLE1",
+        "source": "gs://[YOUR_BUCKET_NAME]/[YOUR_PATH]/*.csv",
+        "source_type": "csv",
+        "source_connection_secret": "NA",
+        "sink": "sftp:///[YOUR_PATH]",
+        "sink_type": "csv",
+        "sink_connection_secret": "projects/[YOUR_PROJECT_ID]/secrets/[YOUR_SECRET_NAME]/versions/latest",
+        "pipeline_options": {
+            "chunksize": 100000,
+            "read_options": {
+                "engine": "python",
+                "sep": "|"
+            },
+            "write_options": {
+                "file_naming": "table1"
+            }
+        }
+    }
+]
